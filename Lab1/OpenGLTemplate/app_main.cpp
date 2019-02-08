@@ -51,13 +51,13 @@ void appDrawScene() {
 	float yOffset = 0.2;
 	
 	
-	glBegin(GL_POLYGON);
+	// glBegin(GL_POLYGON);
 	
-	for (theta; theta < 2 * M_PI; theta += thetaInc) {
-			glVertex2f(radius * cos(theta) + xOffset, radius * sin(theta) + yOffset);
-	}
+	// for (theta; theta < 2 * M_PI; theta += thetaInc) {
+	// 		glVertex2f(radius * cos(theta) + xOffset, radius * sin(theta) + yOffset);
+	// }
 	
-	glEnd();
+	// glEnd();
 	
 	glColor3f(1.0, 0.0, 0.0);
 	
@@ -65,11 +65,68 @@ void appDrawScene() {
 	
 	glBegin(GL_LINES);
 	
-	glVertex3f(-1.0, 1.0, 0.5);
-	glVertex3f(1.0, 0.0, 0.5);
-	
-	glVertex3f(0.0, 1.0, 0.5);
-	glVertex3f(0.0, -1.0, 0.5);
+	glVertex3f(-0.9, -0.5, 0.5);
+	glVertex3f(-0.8, 0.5, 0.5);
+
+	glVertex3f(-0.85, 0, 0);
+	glVertex3f(-0.75, 0, 0);
+
+	glVertex3f(-0.7, -0.5, 0.5);
+	glVertex3f(-0.8, 0.5, 0.5);
+
+	glVertex3f(-0.6, -0.5, 0);
+	glVertex3f(-0.6, 0.5, 0);
+
+	glVertex3f(-0.6, 0.5, 0);
+	glVertex3f(-0.4, 0.4, 0);
+
+	glVertex3f(-0.4, -0.4, 0);
+	glVertex3f(-0.4, 0.4, 0);
+
+	glVertex3f(-0.6, -0.5, 0);
+	glVertex3f(-0.4, -0.4, 0);
+
+	glVertex3f(-0.3, -0.5, 0);
+	glVertex3f(-0.3, 0.5, 0);
+
+	glVertex3f(-0.3, 0.5, 0);
+	glVertex3f(-0.1, 0.5, 0);
+
+	glVertex3f(-0.1, 0.5, 0);
+	glVertex3f(-0.1, 0, 0);
+
+	glVertex3f(-0.3, 0, 0);
+	glVertex3f(-0.1, 0, 0);
+
+	glVertex3f(-0.3, 0, 0);
+	glVertex3f(-0.1, -0.5, 0.2);
+
+	glVertex3f(0.1, -0.5, 0);
+	glVertex3f(0.1, 0.5, 0);
+
+	glVertex3f(0, 0.5, 0);
+	glVertex3f(0.2, 0.5, 0);
+
+	glVertex3f(0, -0.5, 0);
+	glVertex3f(0.2, -0.5, 0);
+
+	glVertex3f(0.3, -0.5, 0.5);
+	glVertex3f(0.4, 0.5, 0.5);
+
+	glVertex3f(0.35, 0, 0);
+	glVertex3f(0.45, 0, 0);
+
+	glVertex3f(0.5, -0.5, 0.5);
+	glVertex3f(0.4, 0.5, 0.5);
+
+	glVertex3f(0.6, -0.5, 0);
+	glVertex3f(0.6, 0.5, 0);
+
+	glVertex3f(0.8, -0.5, 0);
+	glVertex3f(0.6, 0.5, 0);
+
+	glVertex3f(0.8, -0.5, 0);
+	glVertex3f(0.8, 0.5, 0);
 	
 	glEnd();
 

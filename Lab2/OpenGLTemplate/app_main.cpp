@@ -14,7 +14,7 @@ using namespace std;
 
 // Store the width and height of the window
 int width = 640, height = 640;
-int posX = 0, posY = 0;
+
 
 void color(double r, double g, double b) {
 	glColor3f(r, g, b);
@@ -50,50 +50,6 @@ void dot(float xOffset, float yOffset) {
 	}
 	
 	glEnd();
-}
-
-void onMouse(int button, int state, int x, int y) {
-  if(state != GLUT_DOWN)
-    return;
-
-  auto window_width = glutGet(GLUT_WINDOW_WIDTH);
-  auto window_height = glutGet(GLUT_WINDOW_HEIGHT);
-
-  GLbyte color[4];
-  GLfloat depth;
-  GLuint index;
-  
-  glReadPixels(x, window_height - y - 1, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, color);
-  glReadPixels(x, window_height - y - 1, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
-  glReadPixels(x, window_height - y - 1, 1, 1, GL_STENCIL_INDEX, GL_UNSIGNED_INT, &index);
-
-  printf("Clicked on pixel %d, %d\n", x, y);
-	posX = x;
-	posY = y;
-}
-
-void marker(int player, double x, double y) {
-	if (player % 2 == 0) {
-		cross(x, y);
-	} else {
-		dot((float)x, (float)y);
-	}
-}
-
-bool game() {
-	glutMouseFunc(onMouse);
-	int player = 0;
-	int turn = 0;
-	while (turn < 9) {
-		if (posX < 190 &&  posY < 190) {
-			marker(player, -0.8, 0.8);
-		} else if (posX > 190 && posY > 190) {
-			
-		}
-		turn++;
-		player++;
-	}
-	return true;
 }
 
 //-------------------------------------------------------
@@ -133,7 +89,6 @@ void appDrawScene() {
 	glFlush();
 	glutSwapBuffers();
 
-	game();
 }
 
 //-------------------------------------------------------
@@ -208,7 +163,7 @@ void appReshapeFunc(int w, int h) {
 // Arguments: 	
 //	b    - mouse button that was clicked, left or right
 //	s 	 - state, either mouse-up or mouse-down
-//	x, y - coordinates of the mouse when click occured
+//	x, y - coordinates of the mouse when click occurred
 //-------------------------------------------------------
 void appMouseFunc(int b, int s, int x, int y) {
 	// Convert from Window to Scene coordinates
@@ -216,6 +171,7 @@ void appMouseFunc(int b, int s, int x, int y) {
 	float my = (float)y;
 
 	windowToScene(mx, my);
+	printf("peep, %f, %f\n", mx, my);
 
 	// Redraw the scene by calling appDrawScene above
 	// so that the point we added above will get painted

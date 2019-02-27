@@ -1,0 +1,16 @@
+{
+  "cSpell.words": [
+    "helvetica",
+    "win",
+    "xmax",
+    "xmin",
+    "ymax",
+    "ymin"
+  ],
+  "files.associations": {
+    "*.html": "html",
+    "*.sqlite": "sql",
+    "*.jsx": "javascriptreact",
+    "iostream": "cpp"
+  }
+}

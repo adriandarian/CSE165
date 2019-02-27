@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cmath>
+#include <vector>
 
 #if defined WIN32
 #include <freeglut.h>
@@ -9,48 +10,183 @@
 #include <GL/freeglut.h>
 #endif
 
-
 using namespace std;
 
 // Store the width and height of the window
 int width = 640, height = 640;
 
+bool player = true;
+bool  over = false;
 
-void color(double r, double g, double b) {
-	glColor3f(r, g, b);
+enum Shape {none, circle, cross};
+
+struct Rect {
+  float x;
+  float y;
+  float w;
+  float h;
+  
+  bool occupied;
+  Shape shape;
+  
+  Rect ();
+  
+  Rect (float x, float y, float w, float h);
+  
+  bool contains(float mx, float my);
+  
+  void draw();
+};
+
+Rect::Rect (){
+  x = -0.5;
+  y = 0.5;
+  w = 0.5;
+  h = 0.5;
+  occupied = false;
+  shape = none;
 }
 
-void cross(double x, double y) {
-	color(1.0, 0.0, 0.0);
-    
-	glLineWidth(5);
-	
-	glBegin(GL_LINES);
-	
-	glVertex3f(-x, y, 0);
-	glVertex3f(x, -y, 0);
-	
-	glVertex3f(x, y, 0);
-	glVertex3f(-x, -y, 0);
-	
-	glEnd();
+Rect::Rect (float x, float y, float w, float h){
+  this->x = x;
+  this->y = y;
+  this->w = w;
+  this->h = h;
+  occupied = false;
+  shape = none;
 }
 
-void dot(float xOffset, float yOffset) {
-	float thetaInc = M_PI/100;
-	float theta = 0;
-	float radius = 0.2;
 
-	color(1.0, 0.0, 0.0);
+bool Rect::contains(float mx, float my){
+  return mx >= x && mx <= x + w && my <= y && my >= y - h;
+}
+
+void Rect::draw() {
+  glLineWidth(3);
+  if (shape == circle){
+    glColor3f(179.0/255.0, 60.0/255.0, 123.0/255.0);
+    glBegin(GL_LINES);
     
-	glBegin(GL_POLYGON);
-	
-	for (theta; theta < 2*M_PI; theta+=thetaInc) {
-		glVertex2f(radius * cos(theta) + xOffset, radius * sin(theta) + yOffset);
+    float inc = 0.1;
+    
+    for(float theta = 0; theta < 2*M_PI; theta += inc){
+      glVertex2f((w/2-0.1)*cos(theta)+x+(w/2), (w/2-0.1)*sin(theta) + y - h/2);
+      glVertex2f((w/2-0.1)*cos(theta+inc)+x+(w/2), (w/2-0.1)*sin(theta+inc) + y - h/2);
+    }
+    
+    glEnd();
+  } else if (shape == cross) {
+    glColor3f(57.0/255.0, 249.0/255.0, 147.0/255.0);
+    glBegin(GL_LINES);
+    glVertex2f(x + 0.1, y - 0.1);
+    glVertex2f(x + w - 0.1, y - h + 0.1);
+    
+    glVertex2f(x + 0.1, y - h + 0.1);
+    glVertex2f(x + w - 0.1, y - 0.1);
+    glEnd();
+  }
+  
+  
+  glColor3f(1, 1, 1);
+  glBegin(GL_POLYGON);
+  
+  glVertex2f(x, y);
+  glVertex2f(x + w, y);
+  glVertex2f(x + w, y - h);
+  glVertex2f(x, y - h);
+  
+  glEnd();
+}
+
+vector<Rect> grid;
+
+bool ai = true;
+
+bool winX(vector<Rect> grid);
+bool winO(vector<Rect> grid);
+
+void Text(void *font, const char s[], float x, float y) {
+	glRasterPos2f(x,y);
+	for (unsigned int i = 0; i < strlen(s); i++) {
+		glutBitmapCharacter(font, s[i]);
 	}
-	
-	glEnd();
 }
+
+void checkGameState(vector<Rect> grid){
+  if (winX(grid)) {
+    Text(GLUT_BITMAP_HELVETICA_18, "Game Over", 100, 160);
+    cout << "X wins" << endl;
+    Text(GLUT_BITMAP_HELVETICA_18, "Player1 wins", 95, 185);
+     over = true;
+  }
+  if (winO(grid)) {
+    Text(GLUT_BITMAP_HELVETICA_18, "Game Over", 100, 160);
+    cout << "O wins" << endl;
+    if (ai == true) {
+
+    } else {
+      Text(GLUT_BITMAP_HELVETICA_18, "Player2 wins", 95, 185);
+    }
+     over = true;
+  } 
+  if (!over) {
+    bool flag = true;
+    for (int i = 0; i < grid.size(); i++) {
+      if (!grid[i].occupied) {
+        flag = false;
+        break;
+      }
+    }
+    if (flag) {
+       over = true;
+      cout << "Nobody wins" << endl;
+      Text(GLUT_BITMAP_HELVETICA_18, "It's a draw", 110, 185);
+    }
+  }
+}
+
+bool winX(vector<Rect> grid) {
+  Shape temp = cross;
+  if (grid[0].shape == temp && grid[1].shape == temp && grid[2].shape == temp) {
+    return true;
+  } else if (grid[3].shape == temp && grid[4].shape == temp && grid[5].shape == temp) {
+    return true;
+  } else if (grid[6].shape == temp && grid[7].shape == temp && grid[8].shape == temp) {
+    return true;
+  } else if (grid[0].shape == temp && grid[3].shape == temp && grid[6].shape == temp) {
+    return true;
+  } else if (grid[1].shape == temp && grid[4].shape == temp && grid[7].shape == temp) {
+    return true;
+  } else if (grid[2].shape == temp && grid[5].shape == temp && grid[8].shape == temp) {
+    return true;
+  } else if (grid[0].shape == temp && grid[4].shape == temp && grid[8].shape == temp) {
+    return true;
+  } else if (grid[2].shape == temp && grid[4].shape == temp && grid[6].shape == temp) {
+    return true;
+  }
+}
+
+bool winO(vector<Rect> grid){
+  Shape temp = circle;
+  if (grid[0].shape == temp && grid[1].shape == temp && grid[2].shape == temp) {
+    return true;
+  } else if (grid[3].shape == temp && grid[4].shape == temp && grid[5].shape == temp) {
+    return true;
+  } else if (grid[6].shape == temp && grid[7].shape == temp && grid[8].shape == temp) {
+    return true;
+  } else if (grid[0].shape == temp && grid[3].shape == temp && grid[6].shape == temp) {
+    return true;
+  } else if (grid[1].shape == temp && grid[4].shape == temp && grid[7].shape == temp) {
+    return true;
+  } else if (grid[2].shape == temp && grid[5].shape == temp && grid[8].shape == temp) {
+    return true;
+  } else if (grid[0].shape == temp && grid[4].shape == temp && grid[8].shape == temp) {
+    return true;
+  } else if (grid[2].shape == temp && grid[4].shape == temp && grid[6].shape == temp) {
+    return true;
+  }
+}
+
 
 //-------------------------------------------------------
 // A function to draw the scene
@@ -60,35 +196,22 @@ void appDrawScene() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// Set background color to black
-	glClearColor(0.0, 0.0, 0.0, 1.0);
+	glClearColor(242.0/255.0, 214.0/255.0, 193.0/255.0, 0.5);
 
 	// Set up the transformations stack
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-
-	glLineWidth(5);
-	
-	glBegin(GL_LINES);
-	
-	glVertex3f(-0.4, 1.0, 0);
-	glVertex3f(-0.4, -1.0, 0);
-	
-	glVertex3f(0.4, 1.0, 0);
-	glVertex3f(0.4, -1.0, 0);
-
-	glVertex3f(1.0, 0.4, 0);
-	glVertex3f(-1.0, 0.4, 0);
-
-	glVertex3f(1.0, -0.4, 0);
-	glVertex3f(-1.0, -0.4, 0);
-	
-	glEnd();
+  
+  // Draw squares for our grid
+  
+  for (int i = 0; i < grid.size(); i++) {
+    grid[i].draw();
+  }
 
 	// We have been drawing everything to the back buffer
 	// Swap the buffers to see the result of what we drew
 	glFlush();
 	glutSwapBuffers();
-
 }
 
 //-------------------------------------------------------
@@ -106,7 +229,7 @@ void windowToScene(float& x, float& y) {
 // A function to handle window resizing
 // Called every time the window is resized
 // Arguments: 	
-//	b    - mouse button that was clicked, left or right
+//	b  - mouse button that was clicked, left or right
 //	s 	 - state, either mouse-up or mouse-down
 //	x, y - coordinates of the mouse when click occured
 //-------------------------------------------------------
@@ -161,9 +284,9 @@ void appReshapeFunc(int w, int h) {
 // A function to handle mouse clicks
 // Called every time the mouse button goes up or down
 // Arguments: 	
-//	b    - mouse button that was clicked, left or right
+//	b  - mouse button that was clicked, left or right
 //	s 	 - state, either mouse-up or mouse-down
-//	x, y - coordinates of the mouse when click occurred
+//	x, y - coordinates of the mouse when click occured
 //-------------------------------------------------------
 void appMouseFunc(int b, int s, int x, int y) {
 	// Convert from Window to Scene coordinates
@@ -171,7 +294,41 @@ void appMouseFunc(int b, int s, int x, int y) {
 	float my = (float)y;
 
 	windowToScene(mx, my);
-	printf("peep, %f, %f\n", mx, my);
+  
+  if (b == 0) {
+    if (s == 0) {
+      // I clicked the left button
+      for (int i = 0; i < grid.size(); i++) {
+        if (!over){
+          if (grid[i].contains(mx, my)) {
+            if (!grid[i].occupied) {
+              if (player) {
+                grid[i].shape = cross;
+              } else {
+                grid[i].shape = circle;
+              }
+              grid[i].occupied = true;
+              player = !player;
+            }
+            checkGameState(grid);
+            if (ai && !over){
+              for (int i = 0; i < grid.size(); i++) {
+                int k = (rand() % (grid.size() + 1 - 0)) + 0;
+                if (!grid[k].occupied){
+                  grid[k].shape = circle;
+                  grid[k].occupied = true;
+                  player = !player;
+                  break;
+                }
+              }
+              checkGameState(grid);
+            }
+            break;
+          }
+        }
+      }
+    }
+  }
 
 	// Redraw the scene by calling appDrawScene above
 	// so that the point we added above will get painted
@@ -194,18 +351,50 @@ void appMotionFunc(int x, int y) {
 // A function to handle keyboard events
 // Called every time a key is pressed on the keyboard
 // Arguments: 	
-//	key  - the key that was pressed
+//	key - the key that was pressed
 //	x, y - coordinates of the mouse when key is pressed
 //-------------------------------------------------------
 void appKeyboardFunc(unsigned char key, int x, int y) {
 	
-	switch (key) {
-		case 27:
-			exit(0);
-			break;
-		default:
-			break;
-	}
+  switch (key) {
+    case 27:
+      exit(0);
+      break;
+    case 'a':
+      if ( over){
+        for (int i = 0; i < grid.size(); i++) {
+          grid[i].shape = none;
+          grid[i].occupied = false;
+           over = false;
+          player = true;
+        }
+        ai = true;
+      }
+      break;
+    case 'p':
+      if ( over){
+        for (int i = 0; i < grid.size(); i++) {
+          grid[i].shape = none;
+          grid[i].occupied = false;
+           over = false;
+          player = true;
+        }
+        ai = false;
+      }
+      break;
+    case ' ':
+      if ( over){
+        for (int i = 0; i < grid.size(); i++) {
+          grid[i].shape = none;
+          grid[i].occupied = false;
+           over = false;
+          player = true;
+        }
+      }
+      break;
+    default:
+      break;
+  }
 
 	// After all the state changes, redraw the scene
 	glutPostRedisplay();
@@ -232,7 +421,18 @@ int main(int argc, char** argv) {
 	glEnable(GL_POINT_SMOOTH);
 	glEnable(GL_LINE_SMOOTH);
 
-
+  grid.push_back(Rect(-0.9, 0.9, 0.55, 0.55));
+  grid.push_back(Rect(-0.3, 0.9, 0.55, 0.55));
+  grid.push_back(Rect(0.3, 0.9, 0.55, 0.55));
+  
+  grid.push_back(Rect(-0.9, 0.3, 0.55, 0.55));
+  grid.push_back(Rect(-0.3, 0.3, 0.55, 0.55));
+  grid.push_back(Rect(0.3, 0.3, 0.55, 0.55));
+  
+  grid.push_back(Rect(-0.9, -0.3, 0.55, 0.55));
+  grid.push_back(Rect(-0.3, -0.3, 0.55, 0.55));
+  grid.push_back(Rect(0.3, -0.3, 0.55, 0.55));
+  
 	// Set callback for drawing the scene
 	glutDisplayFunc(appDrawScene);
 
@@ -247,7 +447,7 @@ int main(int argc, char** argv) {
 
 	// Set callback to handle keyboad events
 	glutKeyboardFunc(appKeyboardFunc);
-    
+  
   glutIdleFunc(idle);
 
 	// Start the main loop

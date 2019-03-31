@@ -1,6 +1,9 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
+#include <array>
+#include <algorithm>
+#include <string>
 
 #if defined WIN32
 #include <freeglut.h>
@@ -107,13 +110,32 @@ class TextBox : public Shape {
   string text;
   float x;
   float y;
+  void *font;
 
 public:
   TextBox(string text, float x, float y) : text(text), x(x), y(y) {}
+  TextBox(string text, float x, float y, void *font) : text(text), x(x), y(y), font(font) {}
 
   void draw() const {
-    
-    renderText(text, x, y);
+    array<void*, 7> fonts = { 
+      GLUT_BITMAP_TIMES_ROMAN_24, 
+      GLUT_BITMAP_TIMES_ROMAN_10,
+      GLUT_BITMAP_HELVETICA_18,
+      GLUT_BITMAP_HELVETICA_12,
+      GLUT_BITMAP_HELVETICA_10,
+      GLUT_BITMAP_8_BY_13,
+      GLUT_BITMAP_9_BY_15 };
+
+    if (!font) {
+      if (find(begin(fonts), end(fonts), font)) {
+        cout << text << "\n" << x << "\n" << y << "\n" << &font << endl;
+        renderText(text, x, y, font);
+      } else {
+        renderText("incorrect specified font", x, y);
+      }
+    } else {
+      renderText(text, x, y);
+    }
   }
 };
 

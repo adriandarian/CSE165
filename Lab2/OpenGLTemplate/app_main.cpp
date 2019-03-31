@@ -16,7 +16,7 @@ using namespace std;
 int width = 640, height = 640;
 
 bool player = true;
-bool  over = false;
+bool over = false;
 
 enum Shape {none, circle, cross};
 
@@ -138,7 +138,7 @@ void checkGameState(vector<Rect> grid){
       }
     }
     if (flag) {
-       over = true;
+      over = true;
       cout << "Nobody wins" << endl;
       Text(GLUT_BITMAP_HELVETICA_18, "It's a draw", 110, 185);
     }
@@ -263,8 +263,7 @@ void appReshapeFunc(int w, int h) {
 		winXmax = center + (appXmax - center)*scale;
 		winYmin = appYmin;
 		winYmax = appYmax;
-	}
-	else {
+	} else {
 		scale = ((appXmax - appXmin) / w) / ((appYmax - appYmin) / h);
 		center = (appYmax + appYmin) / 2;
 		winYmin = center - (center - appYmin)*scale;

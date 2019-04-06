@@ -6,7 +6,7 @@
 #elif defined __APPLE__
 #include <GLUT/glut.h>
 #else
-#include <GL/freeglut.h>
+#include "freeglut/freeglut.h"
 #endif
 
 #include <iostream>

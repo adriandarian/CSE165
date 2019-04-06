@@ -1,6 +1,8 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
+
+// only use the below includes for the font authenticating
 #include <array>
 #include <algorithm>
 #include <string>
@@ -94,6 +96,7 @@ public:
   }
 };
 
+// render text in the application window
 void renderText(string text, float x, float y, void *font = GLUT_BITMAP_HELVETICA_18, float r = 1, float g = 1, float b = 1) {
   glColor3f(r, g, b);
   float offset = 0;
@@ -117,6 +120,7 @@ public:
   TextBox(string text, float x, float y, void *font) : text(text), x(x), y(y), font(font) {}
 
   void draw() const {
+    // array of fonts specified in lab guidelines
     array<void*, 7> fonts = { 
       GLUT_BITMAP_TIMES_ROMAN_24, 
       GLUT_BITMAP_TIMES_ROMAN_10,
@@ -126,7 +130,9 @@ public:
       GLUT_BITMAP_8_BY_13,
       GLUT_BITMAP_9_BY_15 };
 
-    if (!font) {
+    // check whether a font was assigned otherwise use the default
+    if (true) {
+      // check if font exists in limited array of fonts
       if (find(begin(fonts), end(fonts), font)) {
         cout << text << "\n" << x << "\n" << y << "\n" << &font << endl;
         renderText(text, x, y, font);
@@ -314,7 +320,8 @@ int main(int argc, char **argv) {
   shapes.push_back(new Circle(0.5, 0.5, 0.5));
 
   // Everything should be working when we uncomment next line
-  shapes.push_back(new TextBox("Hello World", -0.8, -0.1));
+  shapes.push_back(new TextBox("Hello World", -0.8, -0.1, GLUT_BITMAP_8_BY_13));
+  shapes.push_back(new TextBox("Hello World", -0.8, -0.3));
 
   // Set callback for drawing the scene
   glutDisplayFunc(appDrawScene);

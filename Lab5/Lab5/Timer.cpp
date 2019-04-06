@@ -29,5 +29,5 @@ void Timer::setRate(int mills){
 
 void Timer::start(){
     running = true;
-    timerThread = std::thread(repeat, this);
+    timerThread = new std::thread(repeat, this);
 }

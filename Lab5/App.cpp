@@ -20,7 +20,7 @@ App::App(int argc, char** argv, int width, int height, const char* title): GlutA
 }
 
 void App::draw() {
- 
+    TexRect("./bg.png", 2, 2, 0.5, 0.5);
 
 }
 

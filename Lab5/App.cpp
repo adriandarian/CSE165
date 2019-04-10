@@ -31,7 +31,6 @@ void App::draw() {
     bobcat->draw(1.0);
     
     std::cout << diff_1 << std::endl;
-    
     float modi = 0.14;
     
     if (diff_1 < 1.92 - 0.14) {
@@ -52,12 +51,6 @@ void App::draw() {
             newX_2 = 2.0;
             background2->setX(2.0);
         }
-    }
-}
-
-void App::keyDown(unsigned char key, float x, float y){
-    if (key == 27){
-        exit(0);
     }
 }
 

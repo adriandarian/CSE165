@@ -10,8 +10,7 @@ class App: public GlutApp {
     TexRect* background2;
     AnimatedRect* bobcat;
     
-    float currentX_1, newX_1, diff_1;
-    float currentX_2, newX_2, diff_2;
+    float currentX, newX, diff;
     
 public:
     

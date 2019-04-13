@@ -320,7 +320,7 @@ int main(int argc, char **argv) {
   shapes.push_back(new Circle(0.5, 0.5, 0.5));
 
   // Everything should be working when we uncomment next line
-  shapes.push_back(new TextBox("Hello World", -0.8, -0.1, GLUT_BITMAP_8_BY_13));
+  shapes.push_back(new TextBox("Hello World", -0.8, -0.1, GLUT_BITMAP_9_BY_15));
   shapes.push_back(new TextBox("Hello World", -0.8, -0.3));
 
   // Set callback for drawing the scene
